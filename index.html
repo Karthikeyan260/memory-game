@@ -8,7 +8,7 @@
     .grid-container {
       display: flex;
       flex-wrap: wrap;
-      width: 360px;
+      width: 300px;
       margin: 0 auto;
       justify-content: center;
     }
@@ -97,28 +97,20 @@
       { name: "image6", image: "6.png" },
       { name: "image7", image: "7.png" },
       { name: "image8", image: "8.png" },
-      { name: "image9", image: "9.png" },
-      { name: "image10", image: "10.png" },
-      { name: "image11", image: "11.png" },
-      { name: "image12", image: "12.png" },
-      { name: "image13", image: "13.png" },
-      { name: "image14", image: "14.png" },
-      { name: "image15", image: "15.png" },
-      { name: "image16", image: "16.png" },
-      { name: "image17", image: "17.png" },
-      { name: "image18", image: "18.png" }
+      { name: "image9", image: "9.png" }
     ];
 
     function getCardPairs() {
       const difficulty = document.getElementById("difficulty").value;
       switch(difficulty) {
         case "easy":
+          return 4; // 4 pairs of cards
         case "medium":
-          return 9; // 9 pairs of cards (18 cards)
+          return 6; // 6 pairs of cards
         case "hard":
-          return 18; // 18 pairs of cards (36 cards)
+          return 9; // 9 pairs of cards
         default:
-          return 9;
+          return 4;
       }
     }
 
