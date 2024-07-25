@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Card Game</title>
+  <style>
+    .grid-container {
+      display: flex;
+      flex-wrap: wrap;
+      width: 300px;
+      margin: 0 auto;
+      justify-content: center;
+    }
+    .card {
+      width: 60px;
+      height: 80px;
+      margin: 5px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+    }
+    .card.flipped {
+      transform: rotateY(180deg) scale(1.2);
+    }
+    .card .front,
+    .card .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card .front {
+      background: #fff;
+      transform: rotateY(180deg);
+    }
+    .card .back {
+      background-color: #333;
+      color: #fff;
+      font-size: 24px;
+      transform: rotateY(0deg);
+    }
+    .front img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 10px;
+    }
+    .score {
+      margin: 10px 0;
+      text-align: center;
+      font-size: 24px;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="score">Score: 0</div>
+  <div class="grid-container"></div>
+  <button onclick="restart()">Restart</button>
+  <script>
+    const gridContainer = document.querySelector(".grid-container");
+    let cards = [];
+    let firstCard, secondCard;
+    let lockBoard = false;
+    let score = 0;
+
+    document.querySelector(".score").textContent = `Score: ${score}`;
+
+    const cardImages = [
+      { name: "image1", image: "1.png" },
+      { name: "image2", image: "2.png" },
+      { name: "image3", image: "3.png" },
+      { name: "image4", image: "4.png" },
+      { name: "image5", image: "5.png" },
+      { name: "image6", image: "6.png" },
+      { name: "image7", image: "7.png" },
+      { name: "image8", image: "8.png" },
+      { name: "image9", image: "9.png" }
+    ];
+
+    cards = [...cardImages, ...cardImages];
+    shuffleCards();
+    generateCards();
+
+    function shuffleCards() {
+      let currentIndex = cards.length,
+        randomIndex,
+        temporaryValue;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = cards[currentIndex];
+        cards[currentIndex] = cards[randomIndex];
+        cards[randomIndex] = temporaryValue;
+      }
+    }
+
+    function generateCards() {
+      for (let card of cards) {
+        const cardElement = document.createElement("div");
+        cardElement.classList.add("card");
+        cardElement.setAttribute("data-name", card.name);
+        cardElement.innerHTML = `
+          <div class="front">
+            <img class="front-image" src="${card.image}" alt="${card.name}" />
+          </div>
+          <div class="back">?</div>
+        `;
+        gridContainer.appendChild(cardElement);
+        cardElement.addEventListener("click", flipCard);
+      }
+    }
+
+    function flipCard() {
+      if (lockBoard) return;
+      if (this === firstCard) return;
+
+      this.classList.add("flipped");
+
+      if (!firstCard) {
+        firstCard = this;
+        return;
+      }
+
+      secondCard = this;
+      lockBoard = true;
+
+      checkForMatch();
+    }
+
+    function checkForMatch() {
+      let isMatch = firstCard.dataset.name === secondCard.dataset.name;
+
+      if (isMatch) {
+        disableCards();
+        score++;
+      } else {
+        unflipCards();
+      }
+
+      document.querySelector(".score").textContent = `Score: ${score}`;
+    }
+
+    function disableCards() {
+      firstCard.removeEventListener("click", flipCard);
+      secondCard.removeEventListener("click", flipCard);
+
+      resetBoard();
+    }
+
+    function unflipCards() {
+      setTimeout(() => {
+        firstCard.classList.remove("flipped");
+        secondCard.classList.remove("flipped");
+        resetBoard();
+      }, 1000);
+    }
+
+    function resetBoard() {
+      firstCard = null;
+      secondCard = null;
+      lockBoard = false;
+    }
+
+    function restart() {
+      resetBoard();
+      shuffleCards();
+      score = 0;
+      document.querySelector(".score").textContent = `Score: ${score}`;
+      gridContainer.innerHTML = "";
+      generateCards();
+    }
+  </script>
+</body>
+</html>
