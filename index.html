@@ -8,7 +8,7 @@
     .grid-container {
       display: flex;
       flex-wrap: wrap;
-      width: 300px;
+      width: 360px;
       margin: 0 auto;
       justify-content: center;
     }
@@ -55,15 +55,27 @@
       text-align: center;
       font-size: 24px;
     }
-    button {
+    .controls {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    button, select {
       display: block;
-      margin: 20px auto;
+      margin: 10px auto;
       padding: 10px 20px;
       font-size: 16px;
     }
   </style>
 </head>
 <body>
+  <div class="controls">
+    <label for="difficulty">Select Difficulty:</label>
+    <select id="difficulty" onchange="restart()">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+  </div>
   <div class="score">Score: 0</div>
   <div class="grid-container"></div>
   <button onclick="restart()">Restart</button>
@@ -85,12 +97,30 @@
       { name: "image6", image: "6.png" },
       { name: "image7", image: "7.png" },
       { name: "image8", image: "8.png" },
-      { name: "image9", image: "9.png" }
+      { name: "image9", image: "9.png" },
+      { name: "image10", image: "10.png" },
+      { name: "image11", image: "11.png" },
+      { name: "image12", image: "12.png" },
+      { name: "image13", image: "13.png" },
+      { name: "image14", image: "14.png" },
+      { name: "image15", image: "15.png" },
+      { name: "image16", image: "16.png" },
+      { name: "image17", image: "17.png" },
+      { name: "image18", image: "18.png" }
     ];
 
-    cards = [...cardImages, ...cardImages];
-    shuffleCards();
-    generateCards();
+    function getCardPairs() {
+      const difficulty = document.getElementById("difficulty").value;
+      switch(difficulty) {
+        case "easy":
+        case "medium":
+          return 9; // 9 pairs of cards (18 cards)
+        case "hard":
+          return 18; // 18 pairs of cards (36 cards)
+        default:
+          return 9;
+      }
+    }
 
     function shuffleCards() {
       let currentIndex = cards.length,
@@ -106,6 +136,10 @@
     }
 
     function generateCards() {
+      const pairsCount = getCardPairs();
+      cards = [...cardImages.slice(0, pairsCount), ...cardImages.slice(0, pairsCount)];
+      shuffleCards();
+      gridContainer.innerHTML = "";
       for (let card of cards) {
         const cardElement = document.createElement("div");
         cardElement.classList.add("card");
@@ -174,12 +208,13 @@
 
     function restart() {
       resetBoard();
-      shuffleCards();
       score = 0;
       document.querySelector(".score").textContent = `Score: ${score}`;
-      gridContainer.innerHTML = "";
       generateCards();
     }
+
+    // Initialize the game with the default difficulty level
+    generateCards();
   </script>
 </body>
 </html>
